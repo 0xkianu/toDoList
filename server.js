@@ -12,6 +12,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(parser.urlencoded({ extended: true }));
 app.use(parser.json());
 
+app.get('/heartbeat', (req, res) => {
+    res.json({
+        "is": "working"
+    })
+});
+
 app.get('/', function (req, res, next) {
     res.render('index',{toDoArray:toDoArray});
 })
@@ -28,13 +34,17 @@ app.get('/items', function (req, res, next) {
 })
 
 app.post('/items', (req, res) => {
+    
     for(let i = 0; i < toDoArray.length; i++) {
         if(eval('req.body.delCheck'+(toDoArray[i].id))) {
             toDoArray.splice(i, 1);
+            i--; 
+            continue;
         } 
         if(eval('req.body.compCheck'+(toDoArray[i].id))) {
             toDoArray[i].completed = true;
         }
+        
         toDoArray[i].item = eval('req.body.itemDesc'+(toDoArray[i].id));
     }
     
